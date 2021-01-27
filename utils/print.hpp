@@ -44,14 +44,14 @@ void print(const char * s, Args... args)
 	{
 		char	printfStr[B_SIZE], ft_printfStr[B_SIZE];
 		int		printfRet, ft_printfRet;
-		char	eof = EOF; 
+		char	eof = EOF;
 		int		readReturn;
 		int		p[2];
 
 		if (pipe(p) < 0)
 			throw std::runtime_error("pipe() failed");
 		stdOut = dup(1); pipeOut = p[1]; dup2(pipeOut, 1);
-	
+
 		printfRet = printf(s, args...); write(1, &eof, 1);
 		if ((readReturn = read(p[0], printfStr, B_SIZE)) < 0)
 			throw std::runtime_error("read failed");
@@ -88,7 +88,7 @@ void print(const char * s, Args... args)
 		}
 		if (showTest)
 			exit(EXIT_SUCCESS);
-	}	
+	}
 	++iTest;
 }
 
@@ -104,15 +104,15 @@ void checkn(const char * s, Args... args)
 	{
 		char	printfStr[B_SIZE], ft_printfStr[B_SIZE];
 		int		printfRet, ft_printfRet;
-		char	eof = EOF; 
+		char	eof = EOF;
 		int		readReturn;
 		int		p[2];
 		unsigned long long int printfn = -1 , ft_printfn = -1;
-	
+
 		if (pipe(p) < 0)
 			throw std::runtime_error("pipe() failed");
 		stdOut = dup(1); pipeOut = p[1]; dup2(pipeOut, 1);
-	
+
 		printfRet = printf(s, args..., &printfn); write(1, &eof, 1);
 		if ((readReturn = read(p[0], printfStr, B_SIZE)) < 0)
 			throw std::runtime_error("read failed");
@@ -124,7 +124,7 @@ void checkn(const char * s, Args... args)
 			cout << FG_CYAN << "printf:    [" << printfStr << "] = " << printfRet << " n = " << (unsigned long long int)static_cast<requiredType>(printfn) << ENDL;
 			dup2(pipeOut, 1);
 		}
-		
+
 		ft_printfRet = ft_printf(s, args..., &ft_printfn); write(1, &eof, 1);
 		if ((readReturn = read(p[0], ft_printfStr, B_SIZE)) < 0)
 			throw std::runtime_error("read failed");
@@ -132,9 +132,19 @@ void checkn(const char * s, Args... args)
 		close(p[0]); close(pipeOut); dup2(stdOut, 1);
 		if (showTest)
 		{
-			cout << FG_BLUE << "ft_printf: [" << ft_printfStr << "] = " << ft_printfRet << " n = " << (unsigned long long int)static_cast<requiredType>(ft_printfn) << ENDL;
-			if (printfn == ft_printfn) cout << FG_GREEN << "cast:      [OK]" << ENDL;
-			else cout << FG_RED << "cast:      [KO]" << ENDL;
+			cout << FG_BLUE << "ft_printf: [" << ft_printfStr << "] = "
+				<< ft_printfRet << " n = "
+				<< (unsigned long long int)static_cast<requiredType>(ft_printfn)
+				<< ENDL;
+			if (printfn == ft_printfn) cout << FG_GREEN
+				<< "cast:      [OK]" << ENDL;
+			else cout << FG_RED << "cast:      [KO] " << ENDL
+				<< FG_CYAN << "printf    n = "
+				<< (unsigned long long int)static_cast<requiredType>(printfn)
+				<< " = " << FG_RED << printfn << ENDL
+				<< FG_BLUE << "ft_printf n = "
+				<< (unsigned long long int)static_cast<requiredType>(ft_printfn)
+				<< " = " << FG_RED << ft_printfn << ENDL;
 		}
 		else
 			check(!strcmp(ft_printfStr, printfStr) && printfRet == ft_printfRet && printfn == ft_printfn);
@@ -153,7 +163,7 @@ void checkn(const char * s, Args... args)
 		}
 		if (showTest)
 			exit(EXIT_SUCCESS);
-	}	
+	}
 	++iTest;
 }
 
